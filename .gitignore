@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/.idea/.idea.PhoneCli/.idea
+/.idea/.idea.PhoneNumberCli/.idea

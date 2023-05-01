@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <LangVersion>preview</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <UserSecretsId>PhoneCli-UserSecrets</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="11.5.2" />
+      <PackageReference Include="libphonenumber-csharp" Version="8.13.11" />
+      <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.0.2" />
+      <PackageReference Include="McMaster.Extensions.Hosting.CommandLine" Version="4.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+      <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
+      <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+      <PackageReference Include="Spectre.Console" Version="0.46.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>

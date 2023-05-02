@@ -1,5 +1,4 @@
-﻿using App.Extensions;
-using PhoneNumbers;
+﻿using PhoneNumbers;
 
 namespace App.Services.Phone;
 
@@ -11,89 +10,57 @@ public class PhoneService : IPhoneService
 
     public Task<IEnumerable<PhoneNumber>> GenerateAsync(PhoneParameters parameters, CancellationToken cancellationToken)
     {
-        var count = 2 * parameters.MaxItems;
         var numbers = Enumerable
-            .Range(1, count)
-            .Select(_ => GeneratePhoneNumber(parameters.CountryCode, parameters.PhoneType))
-            .Where(x => x != null && (x.IsFixed() || x.IsMobile()))
+            .Range(1, 2 * parameters.MaxItems)
+            .Select(_ => GeneratePhoneNumber(parameters))
+            .Where(x => x != null)
             .Take(parameters.MaxItems);
         return Task.FromResult(numbers);
     }
 
     public Task<PhoneNumber> ValidateAsync(PhoneParameters parameters, CancellationToken cancellationToken)
     {
-        var countryCode = parameters.CountryCode.IgnoreEquals("Any") 
+        var countryCode = string.IsNullOrEmpty(parameters.CountryCode) 
             ? null 
             : parameters.CountryCode.ToUpper();
-        var number = PhoneNumberHelper.Parse(parameters.PhoneNumber, countryCode);
+        var number = ParsePhoneNumber(parameters.PhoneNumber, countryCode);
+        var numberType = PhoneNumberHelper.GetNumberType(number);
         var phoneNumber = number is null
             ? null
             : new PhoneNumber
             {
                 CountryCode = countryCode,
                 CallingCode = number.CountryCode,
-                PhoneType = GetPhoneNumberType(number),
+                PhoneType = PhoneMapper.MapPhoneNumberType(numberType),
                 NationalNumber = number.NationalNumber.ToString()
             };
         return Task.FromResult(phoneNumber);
     }
 
-    private static PhoneNumber GeneratePhoneNumber(string code, string type)
+    private static PhoneNumber GeneratePhoneNumber(PhoneParameters parameters)
     {
-        var countryCode = GetPhoneCountryCode(code);
-        var phoneType = GetPhoneNumberType(type);
+        var phoneType = PhoneMapper.MapPhoneNumberType(parameters.PhoneType);
+        var countryCode = PhoneMapper.MapPhoneCountryCode(parameters.CountryCode);
         var number = PhoneNumberHelper.GetExampleNumberForType(countryCode, phoneType);
         if (number is null) return null;
         return new PhoneNumber
         {
             CountryCode = countryCode,
             CallingCode = number.CountryCode,
-            PhoneType = GetPhoneNumberType(number),
+            PhoneType = PhoneMapper.MapPhoneNumberType(phoneType),
             NationalNumber = number.NationalNumber.ToString()
         };
     }
-
-    private static string GetPhoneCountryCode(string countryCode)
-    {
-        return countryCode.IgnoreEquals("Any") 
-            ? GetRandomPhoneCountryCode() 
-            : countryCode.ToUpper();
-    }
-
-    private static PhoneNumberType GetPhoneNumberType(string phoneType)
-    {
-        return phoneType.ToLower() switch
-        {
-            "fixed" => PhoneNumberType.FIXED_LINE,
-            "mobile" => PhoneNumberType.MOBILE,
-            "any" => GetRandomPhoneType(),
-            _ => throw new ArgumentOutOfRangeException(nameof(phoneType), $"Unexpected value {phoneType}")
-        };
-    }
-
-    private static string GetPhoneNumberType(PhoneNumbers.PhoneNumber phoneNumber)
-    {
-        var numberType = PhoneNumberHelper.GetNumberType(phoneNumber);
-        return numberType switch
-        {
-            PhoneNumberType.FIXED_LINE => "Fixed",
-            PhoneNumberType.MOBILE => "Mobile",
-            PhoneNumberType.FIXED_LINE_OR_MOBILE => "Any",
-            _ => throw new ArgumentOutOfRangeException(nameof(numberType), $"Unexpected value {numberType}")
-        };
-    }
     
-    private static PhoneNumberType GetRandomPhoneType()
+    private static PhoneNumbers.PhoneNumber ParsePhoneNumber(string phoneNumber, string countryCode)
     {
-        var random = Random.Shared.Next(1000);
-        return random % 2 == 0
-            ? PhoneNumberType.MOBILE
-            : PhoneNumberType.FIXED_LINE;
-    }
-    
-    private static string GetRandomPhoneCountryCode()
-    {
-        var index = Random.Shared.Next(SupportedCountryCodes.Count);
-        return SupportedCountryCodes.ElementAt(index);
+        try
+        {
+            return PhoneNumberHelper.Parse(phoneNumber, countryCode);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 }

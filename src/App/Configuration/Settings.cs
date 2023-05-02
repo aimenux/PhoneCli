@@ -36,8 +36,8 @@ public sealed class Settings
             : "./";
         return Path.GetFullPath(directory);
     }
-    
+
     public int DefaultMaxItems { get; init; } = 30;
-    public string DefaultPhoneType { get; init; } = "Any";
-    public string DefaultCountryCode { get; init; } = "Any";
+    public string DefaultPhoneType { get; init; }
+    public string DefaultCountryCode { get; init; }
 }

@@ -20,7 +20,7 @@ public class ToolCommand : AbstractCommand
     [Option("-v|--version", "Show version information.", CommandOptionType.NoValue)]
     public bool ShowVersion { get; init; }
 
-    protected override Task ExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
+    protected override void Execute(CommandLineApplication app)
     {
         if (ShowSettings)
         {
@@ -38,7 +38,5 @@ public class ToolCommand : AbstractCommand
             ConsoleService.RenderTitle(Settings.Cli.FriendlyName);
             app.ShowHelp();
         }
-
-        return Task.CompletedTask;
     }
 }

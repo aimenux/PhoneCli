@@ -6,6 +6,26 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <UserSecretsId>PhoneCli-UserSecrets</UserSecretsId>
+        <Version>0.0.1-alpha</Version>
+        <Authors>Aymen TROUDI</Authors>
+        <PackAsTool>true</PackAsTool>
+        <PackageId>PhoneCli</PackageId>
+        <PackageOutputPath>../../nugets</PackageOutputPath>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <ToolCommandName>PhoneCli</ToolCommandName>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>A net global tool helping to generate and validate phone number(s)</Description>
+        <PackageTags>dotnet, global tools, cli, phone numbers</PackageTags>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/aimenux/PhoneCli</PackageProjectUrl>
+        <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <Deterministic>true</Deterministic>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <EnablePackageValidation>true</EnablePackageValidation>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>        
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,6 +44,10 @@
       <PackageReference Include="Spectre.Console" Version="0.46.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>    
+    
     <ItemGroup>
       <None Update="appsettings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

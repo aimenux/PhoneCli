@@ -77,31 +77,19 @@ public class ConsoleService : IConsoleService
         AnsiConsole.WriteException(exception, formats);
         AnsiConsole.WriteLine();
     }
-
-    public async Task RenderStatusAsync(Func<Task> action)
-    {
-        var spinner = RandomSpinner();
-
-        await AnsiConsole.Status()
-            .StartAsync("Work is in progress ...", async ctx =>
-            {
-                ctx.Spinner(spinner);
-                await action.Invoke();
-            });
-    }
-
-    public async Task<T> RenderStatusAsync<T>(Func<Task<T>> func)
-    {
-        var spinner = RandomSpinner();
-
-        return await AnsiConsole.Status()
-            .StartAsync("Work is in progress ...", async ctx =>
-            {
-                ctx.Spinner(spinner);
-                return await func.Invoke();
-            });
-    }
     
+    public void RenderStatus(Action action)
+    {
+        var spinner = RandomSpinner();
+
+        AnsiConsole.Status()
+            .Start("Work is in progress ...", ctx =>
+            {
+                ctx.Spinner(spinner);
+                action.Invoke();
+            });
+    }
+
     public bool GetYesOrNoAnswer(string text, bool defaultAnswer)
     {
         if (AnsiConsole.Confirm($"Do you want to [u]{text}[/] ?", defaultAnswer)) return true;
@@ -136,13 +124,22 @@ public class ConsoleService : IConsoleService
 
     public void RenderPhoneNumber(PhoneParameters parameters, PhoneNumber phoneNumber)
     {
-        if (phoneNumber is null)
-        {
-            RenderProblem($"{parameters.PhoneNumber} is not valid");
-            return;
-        }
-        
-        RenderText($"{parameters.PhoneNumber} is valid", Color.Green);
+        var table = new Table()
+            .BorderColor(Color.White)
+            .Border(TableBorder.Square)
+            .Title($"[green][bold]{parameters.PhoneNumber} is valid[/][/]")
+            .AddColumn(new TableColumn("[u]CountryCode[/]").Centered())
+            .AddColumn(new TableColumn("[u]PhoneType[/]").Centered())
+            .AddColumn(new TableColumn("[u]PhoneNumber[/]").Centered());
+
+        table.AddRow(
+            ToMarkup(phoneNumber.CountryCode),
+            ToMarkup(phoneNumber.PhoneType),
+            ToMarkup(phoneNumber.ToString()));
+
+        AnsiConsole.WriteLine();
+        AnsiConsole.Write(table);
+        AnsiConsole.WriteLine(); 
     }
 
     public void RenderPhoneNumbers(PhoneParameters parameters, IEnumerable<PhoneNumber> phoneNumbers)
@@ -159,8 +156,6 @@ public class ConsoleService : IConsoleService
             .AddColumn(new TableColumn("[u]PhoneNumber[/]").Centered());
 
         var index = 1;
-        var countryCode = parameters.CountryCode.ToUpper();
-        var phoneType = parameters.PhoneType.ToUpper();
         foreach (var phoneNumber in phoneNumbers)
         {
             table.AddRow(

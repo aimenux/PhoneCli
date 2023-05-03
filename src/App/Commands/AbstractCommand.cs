@@ -17,7 +17,7 @@ public abstract class AbstractCommand
         Settings = options?.Value ?? throw new ArgumentNullException(nameof(options));
     }
 
-    public async Task<int> OnExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
+    public int OnExecute(CommandLineApplication app)
     {
         try
         {
@@ -27,7 +27,7 @@ public abstract class AbstractCommand
                 return Settings.ExitCode.Ko;
             }
 
-            await ExecuteAsync(app, cancellationToken);
+            Execute(app);
             return Settings.ExitCode.Ok;
         }
         catch (Exception ex)
@@ -37,7 +37,7 @@ public abstract class AbstractCommand
         }
     }
 
-    protected abstract Task ExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default);
+    protected abstract void Execute(CommandLineApplication app);
 
     protected virtual bool HasValidOptionsAndArguments(out ValidationErrors validationErrors)
     {

@@ -28,7 +28,7 @@ public class ValidateCommand : AbstractCommand
     [Option("-n|--number", "Phone number", CommandOptionType.SingleValue)]
     public string PhoneNumber { get; init; }
 
-    protected override async Task ExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
+    protected override void Execute(CommandLineApplication app)
     {
         var parameters = new PhoneParameters
         {
@@ -36,9 +36,14 @@ public class ValidateCommand : AbstractCommand
             PhoneNumber = PhoneNumber
         };
         
-        await ConsoleService.RenderStatusAsync(async () =>
+        ConsoleService.RenderStatus(() =>
         {
-            var phoneNumber = await _phoneService.ValidateAsync(parameters, cancellationToken);
+            if (!_phoneService.TryValidate(parameters, out var phoneNumber))
+            {
+                ConsoleService.RenderProblem($"{parameters.PhoneNumber} is not valid");
+                return;
+            }
+
             ConsoleService.RenderPhoneNumber(parameters, phoneNumber);
         });
     }

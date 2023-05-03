@@ -33,7 +33,7 @@ public class GenerateCommand : AbstractCommand
     [Option("-m|--max", "Max items", CommandOptionType.SingleValue)]
     public int MaxItems { get; init; }
 
-    protected override async Task ExecuteAsync(CommandLineApplication app, CancellationToken cancellationToken = default)
+    protected override void Execute(CommandLineApplication app)
     {
         var parameters = new PhoneParameters
         {
@@ -42,9 +42,9 @@ public class GenerateCommand : AbstractCommand
             MaxItems = MaxItems
         };
         
-        await ConsoleService.RenderStatusAsync(async () =>
+        ConsoleService.RenderStatus(() =>
         {
-            var phoneNumbers = await _phoneService.GenerateAsync(parameters, cancellationToken);
+            var phoneNumbers = _phoneService.Generate(parameters);
             ConsoleService.RenderPhoneNumbers(parameters, phoneNumbers);
         });
     }

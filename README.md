@@ -1,3 +1,6 @@
+[![.NET](https://github.com/aimenux/PhoneCli/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aimenux/PhoneCli/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/vpre/PhoneCli)](https://www.nuget.org/packages/PhoneCli/)
+
 # PhoneCli
 ```
 A net global tool helping to generate and validate phone number(s)

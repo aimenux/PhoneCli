@@ -3,7 +3,7 @@
 
 # PhoneCli
 ```
-A net global tool helping to generate and validate phone number(s)
+A net global tool helping to generate and validate phone numbers
 ```
 
 > In this repo, i m building a global tool that allows to generate and validate phone numbers.

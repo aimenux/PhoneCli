@@ -48,13 +48,14 @@ public class PhoneService : IPhoneService
 
     private static PhoneNumber GeneratePhoneNumber(PhoneParameters parameters)
     {
-        var phoneType = PhoneMapper.MapPhoneNumberType(parameters.PhoneType);
+        var phoneNumberType = PhoneMapper.MapPhoneNumberType(parameters.PhoneType);
         var countryCode = PhoneMapper.MapPhoneCountryCode(parameters.CountryCode);
-        var number = PhoneNumberHelper.GetExampleNumberForType(countryCode, phoneType);
+        var number = PhoneNumberHelper.GetExampleNumberForType(countryCode, phoneNumberType);
         if (number is null) return null;
 
-        var (fixedNumber, prefixNumber) = FixNationalNumber(number.NationalNumber, countryCode, parameters.PhoneType);
-        var randomNumber = RandomizeNationalNumber(fixedNumber, countryCode, parameters.PhoneType);
+        var phoneType = PhoneMapper.MapPhoneNumberType(phoneNumberType);
+        var (fixedNumber, prefixNumber) = FixNationalNumber(number.NationalNumber, countryCode, phoneType);
+        var randomNumber = RandomizeNationalNumber(fixedNumber, countryCode, phoneType);
         var nationalNumber = $"{prefixNumber}{randomNumber}";
         
         return new PhoneNumber
@@ -62,7 +63,7 @@ public class PhoneService : IPhoneService
             CountryCode = countryCode,
             CallingCode = number.CountryCode,
             NationalNumber = nationalNumber,
-            PhoneType = PhoneMapper.MapPhoneNumberType(phoneType)
+            PhoneType = phoneType
         };
     }
     

@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <UserSecretsId>PhoneCli-UserSecrets</UserSecretsId>
-        <Version>0.0.1-alpha</Version>
+        <Version>0.0.1-beta</Version>
         <Authors>Aymen TROUDI</Authors>
         <PackAsTool>true</PackAsTool>
         <PackageId>PhoneCli</PackageId>

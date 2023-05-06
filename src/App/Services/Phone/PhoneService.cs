@@ -24,7 +24,8 @@ public class PhoneService : IPhoneService
     public bool TryValidate(PhoneParameters parameters, out PhoneNumber phoneNumber)
     {
         phoneNumber = null;
-        
+
+        if (string.IsNullOrWhiteSpace(parameters.PhoneNumber)) return false;
         if (!PhoneNumberRegex.IsMatch(parameters.PhoneNumber)) return false;
         var number = ParsePhoneNumber(parameters);
         if (number is null) return false;
@@ -51,29 +52,64 @@ public class PhoneService : IPhoneService
         var countryCode = PhoneMapper.MapPhoneCountryCode(parameters.CountryCode);
         var number = PhoneNumberHelper.GetExampleNumberForType(countryCode, phoneType);
         if (number is null) return null;
+
+        var (fixedNumber, prefixNumber) = FixNationalNumber(number.NationalNumber, countryCode, parameters.PhoneType);
+        var randomNumber = RandomizeNationalNumber(fixedNumber, countryCode, parameters.PhoneType);
+        var nationalNumber = $"{prefixNumber}{randomNumber}";
+        
         return new PhoneNumber
         {
             CountryCode = countryCode,
             CallingCode = number.CountryCode,
-            PhoneType = PhoneMapper.MapPhoneNumberType(phoneType),
-            NationalNumber = number.NationalNumber.ToString()
+            NationalNumber = nationalNumber,
+            PhoneType = PhoneMapper.MapPhoneNumberType(phoneType)
         };
     }
     
     private static PhoneNumbers.PhoneNumber ParsePhoneNumber(PhoneParameters parameters)
     {
+        var countryCode = string.IsNullOrWhiteSpace(parameters.CountryCode)
+            ? null
+            : parameters.CountryCode.ToUpper();
+
+        return ParsePhoneNumber(parameters.PhoneNumber, countryCode);
+    }
+    
+    private static PhoneNumbers.PhoneNumber ParsePhoneNumber(string phoneNumber, string countryCode)
+    {
         try
         {
-            var countryCode = string.IsNullOrWhiteSpace(parameters.CountryCode)
-                ? null
-                : parameters.CountryCode.ToUpper();
-            
-            return PhoneNumberHelper.Parse(parameters.PhoneNumber, countryCode);
+            return PhoneNumberHelper.Parse(phoneNumber, countryCode);
         }
         catch (Exception)
         {
             return null;
         }
+    }
+    
+    private static (ulong fixedNumber, string prefixNumber) FixNationalNumber(ulong nationalNumber, string countryCode, string phoneType)
+    {
+        return (countryCode?.ToUpper(), phoneType?.ToUpper()) switch
+        {
+            ("TN", "FIXED") => (73000000, ""),
+            ("IT", "FIXED") => (30000000, "0"),
+            _ => (nationalNumber, "")
+        };
+    }
+    
+    private static string RandomizeNationalNumber(ulong nationalNumber, string countryCode, string phoneType)
+    {
+        var randomNationalNumber = RandomNationalNumber(nationalNumber);
+        var number = ParsePhoneNumber(randomNationalNumber, countryCode);
+        return number is null ? nationalNumber.ToString() : randomNationalNumber;
+    }
+
+    private static string RandomNationalNumber(ulong nationalNumber)
+    {
+        var maxValue = (long) nationalNumber / 1000;
+        var seed = (ulong)Random.Shared.NextInt64(maxValue);
+        var result = nationalNumber + seed;
+        return result.ToString();
     }
 
     private static bool IsValidPhoneNumberType(PhoneNumberType phoneNumberType)

@@ -35,6 +35,55 @@ public class PhoneServiceTests
     }
     
     [Theory]
+    [InlineData("fr", "fixed", 100)]
+    [InlineData("fr", "mobile", 100)]
+    [InlineData("be", "fixed", 100)]
+    [InlineData("be", "mobile", 100)]
+    [InlineData("tn", "fixed", 100)]
+    [InlineData("tn", "mobile", 100)]
+    [InlineData("dz", "fixed", 100)]
+    [InlineData("dz", "mobile", 100)]       
+    [InlineData("ma", "fixed", 100)]
+    [InlineData("ma", "mobile", 100)]    
+    [InlineData("es", "fixed", 100)]
+    [InlineData("es", "mobile", 100)]
+    [InlineData("it", "fixed", 100)]
+    [InlineData("it", "mobile", 100)]
+    [InlineData("pt", "fixed", 100)]
+    [InlineData("pt", "mobile", 100)]
+    [InlineData("gb", "fixed", 100)]
+    [InlineData("gb", "mobile", 100)]     
+    public void Should_Generate_Valid_Phone_Numbers(string countryCode, string phoneType, int maxItems)
+    {
+        // arrange
+        var parameters = new PhoneParameters
+        {
+            CountryCode = countryCode,
+            PhoneType = phoneType,
+            MaxItems = maxItems
+        };
+        
+        var service = new PhoneService();
+
+        // act
+        var phoneNumbers = service.Generate(parameters).ToList();
+
+        // assert
+        phoneNumbers.Should().NotBeEmpty().And.HaveCount(maxItems);
+        foreach (var phoneNumber in phoneNumbers)
+        {
+            var nationalNumber = phoneNumber.NationalNumber;
+            var phoneParameters = new PhoneParameters
+            {
+                PhoneNumber = nationalNumber,
+                CountryCode = countryCode
+            };
+            var isValid = service.TryValidate(phoneParameters, out _);
+            isValid.Should().BeTrue($"{nationalNumber} is not valid");
+        }
+    }
+    
+    [Theory]
     [InlineData("50298873", "TN", true)]
     [InlineData("785412563", "FR", true)]
     [InlineData("+21650298873", null, true)]

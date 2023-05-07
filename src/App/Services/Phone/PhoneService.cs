@@ -49,17 +49,18 @@ public class PhoneService : IPhoneService
 
     public IEnumerable<PhoneCode> GetPhoneCodes(PhoneParameters parameters)
     {
-        var keywords = parameters.KeyWords ?? Array.Empty<string>();
         var countryCodes = PhoneNumberHelper
             .GetSupportedRegions()
+            .Where(x => IsMatchingCountryCode(parameters, x))
             .OrderBy(x => x)
-            .Where(x => !keywords.Any() || keywords.Any(x.IgnoreContains))
             .Take(parameters.MaxItems);
         foreach (var countryCode in countryCodes)
         {
             var callingCode = PhoneNumberHelper.GetCountryCodeForRegion(countryCode);
+            var (_, countryName) = PhoneMapper.MapPhoneCountryCode(countryCode);
             yield return new PhoneCode
             {
+                CountryName = countryName,
                 CountryCode = countryCode,
                 CallingCode = callingCode
             };
@@ -69,7 +70,7 @@ public class PhoneService : IPhoneService
     private static PhoneNumber GeneratePhoneNumber(PhoneParameters parameters)
     {
         var phoneNumberType = PhoneMapper.MapPhoneNumberType(parameters.PhoneType);
-        var countryCode = PhoneMapper.MapPhoneCountryCode(parameters.CountryCode);
+        var (countryCode, _) = PhoneMapper.MapPhoneCountryCode(parameters.CountryCode);
         var number = PhoneNumberHelper.GetExampleNumberForType(countryCode, phoneNumberType);
         if (number is null) return null;
 
@@ -136,5 +137,11 @@ public class PhoneService : IPhoneService
     private static bool IsValidPhoneNumberType(PhoneNumberType phoneNumberType)
     {
         return phoneNumberType is PhoneNumberType.MOBILE or PhoneNumberType.FIXED_LINE;
+    }
+    
+    private static bool IsMatchingCountryCode(PhoneParameters parameters, string countryCode)
+    {
+        return string.IsNullOrEmpty(parameters.CountryCode)
+               || parameters.CountryCode.IgnoreEquals(countryCode);
     }
 }

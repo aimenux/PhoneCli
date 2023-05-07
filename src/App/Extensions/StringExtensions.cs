@@ -10,11 +10,6 @@ public static class StringExtensions
         return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
     }
     
-    public static bool IgnoreContains(this string left, string right)
-    {
-        return left is not null && left.Contains(right, StringComparison.OrdinalIgnoreCase);
-    }
-    
     public static bool IsValidPhoneType(this string phoneType)
     {
         return phoneType.IgnoreEquals(Constants.FixedType)

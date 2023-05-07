@@ -116,14 +116,18 @@ public class PhoneServiceTests
     }
     
     [Theory]
-    [ClassData(typeof(Keywords))]
-    public void Should_Get_Phone_Codes(string[] keywords)
+    [InlineData("FR", 1)]
+    [InlineData("BE", 2)]
+    [InlineData("TN", 3)]
+    [InlineData(null, 4)]
+    [InlineData("", 100)]
+    public void Should_Get_Phone_Codes(string countryCode, int maxItems)
     {
         // arrange
         var parameters = new PhoneParameters
         {
-            KeyWords = keywords,
-            MaxItems = 10
+            CountryCode = countryCode,
+            MaxItems = maxItems
         };
         
         var service = new PhoneService();
@@ -133,16 +137,5 @@ public class PhoneServiceTests
 
         // assert
         phoneCodes.Should().NotBeNullOrEmpty();
-    }
-    
-    private class Keywords : TheoryData<string[]>
-    {
-        public Keywords()
-        {
-            Add(null);
-            Add(Array.Empty<string>());
-            Add(new[] { "fr" });
-            Add(new[] { "fr", "be" });
-        }
     }
 }

@@ -19,11 +19,12 @@ public class InfoCommand : AbstractCommand
         options)
     {
         _phoneService = phoneService ?? throw new ArgumentNullException(nameof(phoneService));
+        CountryCode = Settings.DefaultCountryCode;
         MaxItems = Settings.DefaultMaxItems;
     }
 
-    [Option("-f|--filter", "Filter keywords", CommandOptionType.MultipleValue)]
-    public string[] KeyWords { get; init; } = Array.Empty<string>();
+    [Option("-c|--country", "Country code", CommandOptionType.SingleValue)]
+    public string CountryCode { get; init; }
     
     [Option("-m|--max", "Max items", CommandOptionType.SingleValue)]
     public int MaxItems { get; init; }
@@ -32,7 +33,7 @@ public class InfoCommand : AbstractCommand
     {
         var parameters = new PhoneParameters
         {
-            KeyWords = KeyWords,
+            CountryCode = CountryCode,
             MaxItems = MaxItems
         };
         

@@ -10,8 +10,12 @@ namespace Tests.Commands;
 public class InfoCommandTests
 {
     [Theory]
-    [ClassData(typeof(Keywords))]
-    public void Should_InfoCommand_Return_Ok(string[] keywords)
+    [InlineData("FR", 1)]
+    [InlineData("BE", 2)]
+    [InlineData("TN", 3)]
+    [InlineData(null, 4)]
+    [InlineData("", 100)]
+    public void Should_InfoCommand_Return_Ok(string countryCode, int maxItems)
     {
         // arrange
         var options = Options.Create(new Settings());
@@ -21,7 +25,8 @@ public class InfoCommandTests
         var phoneService = new PhoneService();
         var command = new InfoCommand(consoleService, phoneService, options)
         {
-            KeyWords = keywords
+            CountryCode = countryCode,
+            MaxItems = maxItems
         };
 
         // act
@@ -31,15 +36,29 @@ public class InfoCommandTests
         result.Should().Be(Settings.ExitCode.Ok);
     }
     
-    private class Keywords : TheoryData<string[]>
+    [Theory]
+    [InlineData("#", 1)]
+    [InlineData("FR", 0)]
+    [InlineData("BE", -1)]
+    [InlineData("TN", 1001)]
+    public void Should_InfoCommand_Return_Ko(string countryCode, int maxItems)
     {
-        public Keywords()
+        // arrange
+        var options = Options.Create(new Settings());
+        
+        var app = new CommandLineApplication();
+        var consoleService = new FakeConsoleService();
+        var phoneService = new PhoneService();
+        var command = new InfoCommand(consoleService, phoneService, options)
         {
-            Add(null);
-            Add(Array.Empty<string>());
-            Add(new[] { "fr" });
-            Add(new[] { "fr", "be" });
-            Add(new[] { "xyz" });
-        }
-    }
+            CountryCode = countryCode,
+            MaxItems = maxItems
+        };
+
+        // act
+        var result = command.OnExecute(app);
+
+        // assert
+        result.Should().Be(Settings.ExitCode.Ko);
+    }    
 }

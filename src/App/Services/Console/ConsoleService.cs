@@ -181,6 +181,7 @@ public class ConsoleService : IConsoleService
             .Border(TableBorder.Square)
             .Title($"[yellow][bold]{items.Count} phone code(s)[/][/]")
             .AddColumn(new TableColumn("[u]#[/]").Centered())
+            .AddColumn(new TableColumn("[u]CountryName[/]").Centered())
             .AddColumn(new TableColumn("[u]CountryCode[/]").Centered())
             .AddColumn(new TableColumn("[u]CallingCode[/]").Centered());
 
@@ -189,6 +190,7 @@ public class ConsoleService : IConsoleService
         {
             table.AddRow(
                 IndexMarkup(index++),
+                ToMarkup(item.CountryName),
                 ToMarkup(item.CountryCode),
                 ToMarkup(item.CallingCode.ToString()));
         }

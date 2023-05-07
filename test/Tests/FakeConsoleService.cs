@@ -58,4 +58,8 @@ internal class FakeConsoleService : IConsoleService
     public void RenderPhoneNumbers(PhoneParameters parameters, IEnumerable<PhoneNumber> phoneNumbers)
     {
     }
+
+    public void RenderPhoneCodes(PhoneParameters parameters, IEnumerable<PhoneCode> phoneCodes)
+    {
+    }
 }

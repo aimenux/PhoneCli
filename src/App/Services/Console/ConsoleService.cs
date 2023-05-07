@@ -170,6 +170,34 @@ public class ConsoleService : IConsoleService
         AnsiConsole.WriteLine();        
     }
 
+    public void RenderPhoneCodes(PhoneParameters parameters, IEnumerable<PhoneCode> phoneCodes)
+    {
+        var items = phoneCodes
+            .OrderBy(x => x.CountryCode)
+            .ToList();
+
+        var table = new Table()
+            .BorderColor(Color.White)
+            .Border(TableBorder.Square)
+            .Title($"[yellow][bold]{items.Count} phone code(s)[/][/]")
+            .AddColumn(new TableColumn("[u]#[/]").Centered())
+            .AddColumn(new TableColumn("[u]CountryCode[/]").Centered())
+            .AddColumn(new TableColumn("[u]CallingCode[/]").Centered());
+
+        var index = 1;
+        foreach (var item in items)
+        {
+            table.AddRow(
+                IndexMarkup(index++),
+                ToMarkup(item.CountryCode),
+                ToMarkup(item.CallingCode.ToString()));
+        }
+
+        AnsiConsole.WriteLine();
+        AnsiConsole.Write(table);
+        AnsiConsole.WriteLine();
+    }
+
     private static string GetFormattedJson(string json)
     {
         var options = new JsonSerializerOptions { WriteIndented = true };

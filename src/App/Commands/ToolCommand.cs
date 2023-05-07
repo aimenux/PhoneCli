@@ -7,7 +7,7 @@ using static App.Extensions.PathExtensions;
 namespace App.Commands;
 
 [Command(Name = Settings.Cli.UsageName, Description = $"\n{Settings.Cli.Description}")]
-[Subcommand(typeof(GenerateCommand), typeof(ValidateCommand))]
+[Subcommand(typeof(InfoCommand), typeof(GenerateCommand), typeof(ValidateCommand))]
 public class ToolCommand : AbstractCommand
 {
     public ToolCommand(IConsoleService consoleService, IOptions<Settings> options) : base(consoleService, options)

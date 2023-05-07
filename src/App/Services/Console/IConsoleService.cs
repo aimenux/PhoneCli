@@ -18,4 +18,5 @@ public interface IConsoleService
     void RenderValidationErrors(ValidationErrors validationErrors);
     void RenderPhoneNumber(PhoneParameters parameters, PhoneNumber phoneNumber);
     void RenderPhoneNumbers(PhoneParameters parameters, IEnumerable<PhoneNumber> phoneNumbers);
+    void RenderPhoneCodes(PhoneParameters parameters, IEnumerable<PhoneCode> phoneCodes);
 }

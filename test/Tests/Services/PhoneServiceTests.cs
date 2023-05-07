@@ -114,4 +114,34 @@ public class PhoneServiceTests
         number.CountryCode.Should().NotBeNullOrEmpty();
         number.PhoneType.Should().NotBeNullOrEmpty();
     }
+    
+    [Theory]
+    [ClassData(typeof(Keywords))]
+    public void Should_Get_Phone_Codes(string[] keywords)
+    {
+        // arrange
+        var parameters = new PhoneParameters
+        {
+            KeyWords = keywords
+        };
+        
+        var service = new PhoneService();
+
+        // act
+        var phoneCodes = service.GetPhoneCodes(parameters);
+
+        // assert
+        phoneCodes.Should().NotBeNullOrEmpty();
+    }
+    
+    private class Keywords : TheoryData<string[]>
+    {
+        public Keywords()
+        {
+            Add(null);
+            Add(Array.Empty<string>());
+            Add(new[] { "fr" });
+            Add(new[] { "fr", "be" });
+        }
+    }
 }

@@ -11,6 +11,7 @@ public static class ToolCommandValidator
         return command switch
         {
             ToolCommand _ => ValidationErrors.New<ToolCommand>(),
+            InfoCommand infoCommand => Validate(new InfoCommandValidator(), infoCommand),
             GenerateCommand generateCommand => Validate(new GenerateCommandValidator(), generateCommand),
             ValidateCommand validateCommand => Validate(new ValidateCommandValidator(), validateCommand),
             _ => throw new PhoneCliException($"Unexpected command type {typeof(TCommand)}")

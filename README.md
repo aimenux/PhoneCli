@@ -11,6 +11,7 @@ A net global tool helping to generate and validate phone numbers
 > The tool is based on multiple sub commands :
 > - Use sub command `Generate` to generate phone numbers
 > - Use sub command `Validate` to validate phone numbers
+> - Use sub command `Info` to get country/calling phone codes
 
 >
 > To run the tool, type commands :
@@ -18,6 +19,7 @@ A net global tool helping to generate and validate phone numbers
 > - `PhoneCli -s` to show settings
 > - `PhoneCli Generate` to generate phone numbers
 > - `PhoneCli Validate` to validate phone numbers
+> - `PhoneCli Info` to get country/calling phone codes
 >
 >
 > To install global tool from a local source path, type commands :

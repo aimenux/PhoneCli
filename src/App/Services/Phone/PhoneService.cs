@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using App.Extensions;
 using PhoneNumbers;
 
 namespace App.Services.Phone;
@@ -46,6 +47,24 @@ public class PhoneService : IPhoneService
         return phoneNumber != null;
     }
 
+    public IEnumerable<PhoneCode> GetPhoneCodes(PhoneParameters parameters)
+    {
+        var keywords = parameters.KeyWords ?? Array.Empty<string>();
+        var countryCodes = PhoneNumberHelper.GetSupportedRegions();
+        var filteredCountryCodes = !keywords.Any()
+            ? countryCodes
+            : countryCodes.Where(x => keywords.Any(x.IgnoreContains));
+        foreach (var countryCode in filteredCountryCodes)
+        {
+            var callingCode = PhoneNumberHelper.GetCountryCodeForRegion(countryCode);
+            yield return new PhoneCode
+            {
+                CountryCode = countryCode,
+                CallingCode = callingCode
+            };
+        }
+    }
+
     private static PhoneNumber GeneratePhoneNumber(PhoneParameters parameters)
     {
         var phoneNumberType = PhoneMapper.MapPhoneNumberType(parameters.PhoneType);
@@ -55,7 +74,7 @@ public class PhoneService : IPhoneService
 
         var phoneType = PhoneMapper.MapPhoneNumberType(phoneNumberType);
         var (fixedNumber, prefixNumber) = FixNationalNumber(number.NationalNumber, countryCode, phoneType);
-        var randomNumber = RandomizeNationalNumber(fixedNumber, countryCode, phoneType);
+        var randomNumber = RandomizeNationalNumber(fixedNumber, countryCode);
         var nationalNumber = $"{prefixNumber}{randomNumber}";
         
         return new PhoneNumber
@@ -98,7 +117,7 @@ public class PhoneService : IPhoneService
         };
     }
     
-    private static string RandomizeNationalNumber(ulong nationalNumber, string countryCode, string phoneType)
+    private static string RandomizeNationalNumber(ulong nationalNumber, string countryCode)
     {
         var randomNationalNumber = RandomNationalNumber(nationalNumber);
         var number = ParsePhoneNumber(randomNationalNumber, countryCode);

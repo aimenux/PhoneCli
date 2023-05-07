@@ -50,11 +50,12 @@ public class PhoneService : IPhoneService
     public IEnumerable<PhoneCode> GetPhoneCodes(PhoneParameters parameters)
     {
         var keywords = parameters.KeyWords ?? Array.Empty<string>();
-        var countryCodes = PhoneNumberHelper.GetSupportedRegions();
-        var filteredCountryCodes = !keywords.Any()
-            ? countryCodes
-            : countryCodes.Where(x => keywords.Any(x.IgnoreContains));
-        foreach (var countryCode in filteredCountryCodes)
+        var countryCodes = PhoneNumberHelper
+            .GetSupportedRegions()
+            .OrderBy(x => x)
+            .Where(x => !keywords.Any() || keywords.Any(x.IgnoreContains))
+            .Take(parameters.MaxItems);
+        foreach (var countryCode in countryCodes)
         {
             var callingCode = PhoneNumberHelper.GetCountryCodeForRegion(countryCode);
             yield return new PhoneCode

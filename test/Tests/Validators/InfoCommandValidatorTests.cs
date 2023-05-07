@@ -33,6 +33,30 @@ public class InfoCommandValidatorTests
         result.IsValid.Should().BeTrue();
     }
     
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(1001)]
+    public void InfoCommand_Should_Not_Be_Valid(int maxItems)
+    {
+        // arrange
+        var consoleService = Substitute.For<IConsoleService>();
+        var phoneService = Substitute.For<IPhoneService>();
+        var options = Options.Create(new Settings());
+        var command = new InfoCommand(consoleService, phoneService, options)
+        {
+            MaxItems = maxItems
+        };
+        
+        var validator = new InfoCommandValidator();
+
+        // act
+        var result = validator.Validate(command);
+
+        // assert
+        result.IsValid.Should().BeFalse();
+    }
+    
     private class Keywords : TheoryData<string[]>
     {
         public Keywords()

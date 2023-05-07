@@ -122,7 +122,8 @@ public class PhoneServiceTests
         // arrange
         var parameters = new PhoneParameters
         {
-            KeyWords = keywords
+            KeyWords = keywords,
+            MaxItems = 10
         };
         
         var service = new PhoneService();

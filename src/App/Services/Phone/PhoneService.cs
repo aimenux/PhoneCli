@@ -52,6 +52,7 @@ public class PhoneService : IPhoneService
             .Where(x => IsMatchingCountryCode(parameters, x))
             .OrderBy(x => x)
             .Take(parameters.MaxItems);
+        
         foreach (var countryCode in countryCodes)
         {
             var callingCode = PhoneNumberHelper.GetCountryCodeForRegion(countryCode);

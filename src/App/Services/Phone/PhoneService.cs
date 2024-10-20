@@ -6,12 +6,10 @@ namespace App.Services.Phone;
 
 public class PhoneService : IPhoneService
 {
+    private static readonly PhoneNumberUtil PhoneNumberHelper = PhoneNumberUtil.GetInstance();
+    
     private static readonly Regex PhoneNumberRegex = new Regex(@"^(\+|00)?(\d+)$", RegexOptions.Compiled);
     
-    private static readonly PhoneNumberUtil PhoneNumberHelper = PhoneNumberUtil.GetInstance();
-
-    public static readonly HashSet<string> SupportedCountryCodes = PhoneNumberHelper.GetSupportedRegions();
-
     public IEnumerable<PhoneNumber> Generate(PhoneParameters parameters)
     {
         var numbers = Enumerable

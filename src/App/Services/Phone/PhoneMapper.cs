@@ -263,8 +263,8 @@ public static class PhoneMapper
     {
         return phoneType switch
         {
-            PhoneNumberType.FIXED_LINE => Constants.FixedType,
-            PhoneNumberType.MOBILE => Constants.MobileType,
+            PhoneNumberType.FIXED_LINE => Constants.PhoneNumberTypes.Fixed,
+            PhoneNumberType.MOBILE => Constants.PhoneNumberTypes.Mobile,
             _ => throw new ArgumentOutOfRangeException(nameof(phoneType), $"Unexpected value {phoneType}")
         };
     }
@@ -276,12 +276,12 @@ public static class PhoneMapper
             return GetRandomPhoneType();
         }
 
-        if (phoneType.IgnoreEquals(Constants.FixedType))
+        if (phoneType.IgnoreEquals(Constants.PhoneNumberTypes.Fixed))
         {
             return PhoneNumberType.FIXED_LINE;
         }
         
-        if (phoneType.IgnoreEquals(Constants.MobileType))
+        if (phoneType.IgnoreEquals(Constants.PhoneNumberTypes.Mobile))
         {
             return PhoneNumberType.MOBILE;
         }
@@ -301,7 +301,7 @@ public static class PhoneMapper
 
     private static string GetRandomPhoneCountryCode()
     {
-        var supportedCountryCodes = PhoneService.SupportedCountryCodes;
+        var supportedCountryCodes = Constants.SupportedCountryCodes;
         var index = Random.Shared.Next(supportedCountryCodes.Count);
         return supportedCountryCodes.ElementAt(index);
     }

@@ -1,5 +1,4 @@
 using App.Configuration;
-using App.Services.Phone;
 
 namespace App.Extensions;
 
@@ -12,12 +11,12 @@ public static class StringExtensions
     
     public static bool IsValidPhoneType(this string phoneType)
     {
-        return phoneType.IgnoreEquals(Constants.FixedType)
-               || phoneType.IgnoreEquals(Constants.MobileType);
+        return phoneType.IgnoreEquals(Constants.PhoneNumberTypes.Fixed)
+               || phoneType.IgnoreEquals(Constants.PhoneNumberTypes.Mobile);
     }
     
     public static bool IsValidCountryCode(this string countryCode)
     {
-        return PhoneService.SupportedCountryCodes.Contains(countryCode, StringComparer.OrdinalIgnoreCase);
+        return Constants.SupportedCountryCodes.Contains(countryCode);
     }
 }

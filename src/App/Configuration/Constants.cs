@@ -1,8 +1,15 @@
-﻿namespace App.Configuration;
+﻿using PhoneNumbers;
 
-public class Constants
+namespace App.Configuration;
+
+public static class Constants
 {
-    public const string FixedType = "Fixed";
+    public static class PhoneNumberTypes
+    {
+        public const string Fixed = "Fixed";
     
-    public const string MobileType = "Mobile";
+        public const string Mobile = "Mobile";
+    }
+    
+    public static readonly HashSet<string> SupportedCountryCodes = new(PhoneNumberUtil.GetInstance().GetSupportedRegions(), StringComparer.OrdinalIgnoreCase);
 }
